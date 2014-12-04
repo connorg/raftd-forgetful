@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/goraft/raft"
-	"github.com/goraft/raftd/command"
-	"github.com/goraft/raftd/db"
+	"github.com/connorg/raftd-forgetful/db"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
@@ -64,6 +63,7 @@ func (s *Server) ListenAndServe(leader string) error {
 	var err error
 
 	log.Printf("Initializing Raft Server: %s", s.path)
+	log.Println("NOTE: This server has *no* persistence.")
 
 	// Initialize and start Raft server.
 	transporter := raft.NewHTTPTransporter("/raft", 200*time.Millisecond)
@@ -164,19 +164,19 @@ func (s *Server) readHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) writeHandler(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	//vars := mux.Vars(req)
 
 	// Read the value from the POST body.
-	b, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	value := string(b)
+	//b, err := ioutil.ReadAll(req.Body)
+	//if err != nil {
+	//	w.WriteHeader(http.StatusBadRequest)
+	//	return
+	//}
+	//value := string(b)
 
 	// Execute the command against the Raft server.
-	_, err = s.raftServer.Do(command.NewWriteCommand(vars["key"], value))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
+	// _, err = s.raftServer.Do(command.NewWriteCommand(vars["key"], value))
+	// if err != nil {
+	//	http.Error(w, err.Error(), http.StatusBadRequest)
+	//}
 }
